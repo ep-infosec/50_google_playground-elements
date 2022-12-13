@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "target": "es2019",
+    "module": "esnext",
+    "lib": ["ES2020", "ES2015.iterable", "DOM", "DOM.Iterable"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": false,
+    "outDir": ".",
+    "rootDir": "src",
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    // TODO(aomarks) Remove when
+    // https://github.com/material-components/material-web/issues/2715 is fixed.
+    "skipLibCheck": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/internal/worker-api.ts",
+    "src/shared/util.ts"
+  ],
+  "exclude": ["src/service-worker", "src/shared", "src/typescript-worker"],
+  "references": [
+    {
+      "path": "src/service-worker"
+    },
+    {
+      "path": "src/shared"
+    },
+    {
+      "path": "src/typescript-worker"
+    }
+  ]
+}

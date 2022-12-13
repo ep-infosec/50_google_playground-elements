@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
+  <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script type="module" src="../playground-ide.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    playground-ide {
+      margin-bottom: 48px;
+      max-width: 800px;
+
+      /* These are the default styles, but setting them here prevents resizing
+       * jank before upgrade. */
+      display: flex;
+      height: 350px;
+      border: 1px solid #ddd;
+    }
+    .sideBySide {
+      display: flex;
+      border: 1px solid #ddd;
+      max-width: 800px;
+      height: 200px;
+      margin-bottom: 48px;
+    }
+    .sideBySide > playground-file-editor {
+      width: 70%;
+      border-right: 1px solid #ddd;
+    }
+    .sideBySide > playground-preview {
+      width: 30%;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Inline Sample Files</h2>
+  <p>
+    This editor has no configuration file, just <code>&lt;script></code> tags
+    with type attributes with a "sample/" prefix.
+  </p>
+  <playground-ide>
+    <script type="sample/html" filename="index.html">
+<!doctype html>
+<html>
+  <head>
+    <script type="module" src="./my-element.js">&lt;/script>
+  </head>
+  <body>
+    <div>Here are the contents:</div>
+    <my-element myNumber="5">
+      <div>Element is not upgraded</div>
+    </my-element>
+  </body>
+</html>
+    </script>
+    <script type="sample/ts" filename="my-element.ts">
+import { LitElement, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+import './my-second-element.js';
+
+@customElement('my-element')
+export class MyElement extends LitElement {
+  @property({ type: Number })
+  myNumber?: number;
+
+  render() {
+    return html`
+      <div>Here is ${this.myNumber}</div>
+      <div>And here is my second element:</div>
+      <my-second-element></my-second-element>
+    `;
+  }
+}
+    </script>
+    <script type="sample/ts" filename="my-second-element.ts">
+import { LitElement, html } from 'lit';
+import { property } from 'lit/decorators.js';
+
+@customElement('my-second-element')
+export class MySecondElement extends LitElement {
+  render() {
+    return html`
+      <div>This is inside the shadow dom of my-second-element</div>
+    `;
+  }
+}
+    </script>
+  </playground-ide>
+
+  <h2>TypeScript</h2>
+  <section id="typescript">
+    <style>
+      #typescript playground-ide::part(preview-toolbar) {
+        display: none;
+      }
+      #typescript playground-ide::part(preview-loading-indicator) {
+        top: 0;
+      }
+    </style>
+    <p>
+      Note that imports to other TypeScript files use the .js extension like
+      you would with tsc.
+    </p>
+    <playground-ide project-src="/demo/typescript/project.json"
+                 line-numbers></playground-ide>
+  </section>
+
+  <h2>Basic Project</h2>
+  <p>
+    An index.html and .js file, with custom display labels, importing an npm
+    package with bare module specifiers.
+  </p>
+  <playground-ide project-src="/demo/project-1/project.json"></playground-ide>
+
+  <h2>MWC Demo</h2>
+  <p>
+    A demo for <code>&lt;mwc-button></code>.
+  </p>
+  <playground-ide project-src="/demo/mwc-button/project.json"></playground-ide>
+
+  <h2>Custom layout</h2>
+  <section id="custom-layout">
+    <style>
+      #custom-layout playground-file-editor,
+      #custom-layout playground-preview {
+        display: block;
+        border: 1px solid #ddd;
+        max-width: 400px;
+        height: 100px;
+      }
+    </style>
+
+    By using <code>&lt;playground-project></code>,
+    <code>&lt;playground-file-editor></code>, and
+    <code>&lt;playground-preview></code> separately, you can create any kind of
+    layout:
+
+    <playground-project id="custom-project">
+      <script type="sample/html" filename="index.html">
+<!doctype html>
+<body>
+  <script src="./index.js">&lt;/script>
+</body>
+        </script>
+        <script type="sample/ts" filename="index.ts">
+    document.body.textContent = 'Hello!';
+        </script>
+      </playground-project>
+
+    <h4>index.html</h4>
+    <playground-file-editor
+        project="custom-project"
+        filename="index.html"
+        no-line-numbers>
+    </playground-file-editor>
+
+    <h4>index.ts</h4>
+    <playground-file-editor
+        project="custom-project"
+        filename="index.ts"
+        no-line-numbers>
+    </playground-file-editor>
+
+    <h4>preview</h4>
+    <playground-preview
+        project="custom-project">
+    </playground-preview>
+  </section>
+
+  <h2>Hidden parts</h2>
+  <p>Using <code>playground-hide</code> and <code>playground-fold</code>, you can hide some parts of a file's contents.</p>
+  <playground-ide>
+    <script type="sample/html" filename="index.html">
+<!doctype html>
+<html>
+  <head>
+    <script type="module" src="./my-element.js">&lt;/script>
+  </head>
+  <body>
+    <div>Here are the contents:</div>
+    <my-element myNumber="5">
+      <div>Element is not upgraded</div>
+    </my-element>
+  </body>
+</html>
+    </script>
+    <script type="sample/ts" filename="my-element.ts">
+        /* playground-hide */
+        const foo = "Bar";
+        let variable = "ShouldBeFound";
+        /* playground-hide-end */
+    </script>
+  </playground-ide>
+
+  <h2 id="prerender">Pre-rendered editor</h2>
+  <section id="prerender">
+    <playground-project id="prerenderProject">
+      <script type="sample/html" filename="index.html">
+<!doctype html>
+<body>
+  <p>Hello World!</p>
+</body>
+      </script>
+    </playground-project>
+
+    <button id="prerenderLoadButton">Click to load editor</button>
+    <script>
+      const projectId = 'prerenderProject'
+      const button = document.getElementById('prerenderLoadButton');
+      button.addEventListener('click', () => {
+        for (const id of ['prerenderEditor', 'prerenderPreview']) {
+          document.getElementById(id).project = projectId;
+        }
+      });
+    </script>
+
+    <link href="/node_modules/codemirror/lib/codemirror.css" rel="stylesheet">
+    <style>
+    .prerenderBody {
+      font-family: initial;
+      margin: 0 8px;
+    }
+
+    #prerenderLoadButton {
+      margin-bottom: 20px;
+    }
+
+    /* These styles come from parent classes that we don't want to apply because
+    they mess with layout too much. */
+    .CodeMirror-line {
+      margin: 0;
+      padding-left: 4px;
+    }
+    </style>
+
+    <div class="sideBySide">
+      <playground-file-editor id="prerenderEditor">
+        <div class="CodeMirror-lines cm-s-default">
+          <pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-meta">&lt;!doctype html&gt;</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">&lt;body&gt;</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">  <span class="cm-tag">&lt;p&gt;</span>Hello World!<span class="cm-tag">&lt;/p&gt;</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">&lt;/body&gt;</span></span></pre>
+        </div>
+      </playground-file-editor>
+
+      <playground-preview id="prerenderPreview">
+        <div class="prerenderBody"><p>Hello World!</p></div>
+      </playground-preview>
+    </div>
+  </section>
+</body>
+
+</html>

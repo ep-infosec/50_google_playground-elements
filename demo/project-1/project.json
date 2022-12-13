@@ -1,0 +1,10 @@
+{
+  "files": {
+    "index.html": {
+      "label": "HTML"
+    },
+    "my-element.js": {
+      "label": "JS"
+    }
+  }
+}
